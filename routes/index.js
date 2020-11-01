@@ -4,15 +4,12 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express', condition: true, newArray: [1, 2, 3] });
+  res.render('index', { title: 'form Validation', success: false, errors: req.session.errors });
+  req.session.errors = null;
 });
 
-router.get('/test/:id', function (req, res, next){
-  res.render('test', {output: req.params.id});
-});
-
-router.post('/test/submit', function (req, res, next){
-  res.redirect('/test/...');
+router.post('/submit', function(re, res, next){
+  // CHeck validity
 });
 
 module.exports = router;
