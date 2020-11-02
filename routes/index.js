@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
-var mongo = require('mongodb');
+var mongo = require('mongodb').MongoClient;
+var objectId = require('mongodb').ObjectID;
 var assert = require('assert');
 
 var url = 'mongodb://localhost:27017/test'
@@ -13,11 +14,10 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/get-data' , function(req, res, next){
+  var resultArray = [];
   mongo.connect(url, function(err, db){
-    assert.equal(null, err);
     var cursor = db.collection('user-data').find();
     cursor.forEach(function(doc, err){
-      assert(null, err);
       resultArray.push(doc);
     }, function(){
       db.close();
@@ -27,32 +27,41 @@ router.get('/get-data' , function(req, res, next){
 });
 
 router.post('/insert' , function(req, res, next){
+  console.log(req);
   var item = {
     title: req.body.title,
     content: req.body.content,
     author: req.body.author
-  }
-
+  };
 
   mongo.connect(url, function(err, db) {
     assert.equal(null, err);
     db.collection('user-data').insertOne(item, function(err, result) {
-      assert.equal(null, err);
       console.log('Item inserted');
       db.close();
     });
   });
 
-
-  
-
   res.redirect('/');
 });
 router.post('/update' , function(req, res, next){
+  var item = {
+    title: req.body.title,
+    content: req.body.content,
+    author: req.body.author
+  };
+  var id = req.body.id;
 
+  mongo.connect(url, function(err, db) {
+    assert.equal(null, err);
+    db.collection('user-data').updateOne({"_id": objectId(id)}, {$set: item}, function(err, result) {
+      console.log('Item Updated');
+      db.close();
+    });
+  });
 });
 router.post('/delete' , function(req, res, next){
-
+  
 });
 
 // router.post('/submit', function(req , res, next){
