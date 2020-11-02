@@ -61,7 +61,15 @@ router.post('/update' , function(req, res, next){
   });
 });
 router.post('/delete' , function(req, res, next){
-  
+  var id = req.body.id;
+
+  mongo.connect(url, function(err, db) {
+    assert.equal(null, err);
+    db.collection('user-data').deleteOne({"_id": objectId(id)}, function(err, result) {
+      console.log('Item Deleted');
+      db.close();
+    });
+  });
 });
 
 // router.post('/submit', function(req , res, next){
